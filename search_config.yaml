@@ -1,0 +1,3 @@
+test_groups:
+- name: periodic-ci-openshift-oadp-operator-master-4.8-operator-e2e-aws-periodic-slack
+  gcs_prefix: origin-ci-test/logs/periodic-ci-openshift-oadp-operator-master-4.8-operator-e2e-aws-periodic-slack
