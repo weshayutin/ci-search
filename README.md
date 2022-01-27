@@ -35,7 +35,7 @@ Do deploy ci-search in a new OpenShift project, you can use:
 
 ```console
 $ oc new-project ci-search
-$ oc new-app --name ci-search https://github.com/openshift/ci-search
+$ oc new-app --name ci-search https://github.com/weshayutin/ci-search
 $ oc create route edge --service=ci-search
 $ oc get route -o jsonpath='{"https://"}{.status.ingress[0].host}{"/chart\n"}' ci-search
 https://ci-search-ci-search.svc.ci.openshift.org/chart
