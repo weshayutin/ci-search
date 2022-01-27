@@ -31,6 +31,12 @@ The search binary shells out to `rg` or `grep` (`rg` preferred for performance a
 
 ## Deploying in OpenShift
 
+* note the cluster must be setup with OCS with google storage backing.
+e.g.
+[google storage](https://console.cloud.google.com/storage/browser/origin-ci-test/logs/periodic-ci-openshift-oadp-operator-master-4.8-operator-e2e-aws-periodic-slack?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&prefix=&forceOnObjectsSortingFiltering=false)
+
+[redhat-docs](https://access.redhat.com/documentation/en-us/red_hat_openshift_container_storage/4.5/html-single/deploying_and_managing_openshift_container_storage_using_google_cloud/index#creating-a-new-backing-store_gcp_gcp)
+
 Do deploy ci-search in a new OpenShift project, you can use:
 
 ```console
