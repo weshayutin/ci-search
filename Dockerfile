@@ -13,5 +13,5 @@ ENTRYPOINT ["search"]
 #CMD ["--path=/var/lib/ci-search/", "--config=search_config.yaml", "-v=8"]
 # This next line works, just be patient and it will index
 #CMD ["--path=/var/lib/ci-search/", "--deck-uri=https://prow.ci.openshift.org", "--v=7"]
-CMD ["--path=/var/lib/ci-search/", "--deck-uri=https://prow.ci.openshift.org/?job=*oadp*", "--v=7"]
+CMD ["--path=/var/lib/ci-search/", "--deck-uri=https://prow.ci.openshift.org", "--v=7" "--job-uri-prefix=https://prow.ci.openshift.org/view/gs/origin-ci-test/logs/periodic-ci-openshift-oadp-operator-master-4.8-operator-e2e-gcp-periodic-slack"]
 EXPOSE 8080
