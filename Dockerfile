@@ -9,17 +9,7 @@ RUN curl -L https://github.com/BurntSushi/ripgrep/releases/download/12.0.1/ripgr
     tar xvzf - --wildcards --no-same-owner --strip-components=1  -C /usr/bin '*/rg'
 RUN mkdir /var/lib/ci-search && chown 1000:1000 /var/lib/ci-search && chmod 1777 /var/lib/ci-search
 USER 1000:1000
-#ENTRYPOINT ["search"]
-ENTRYPOINT ["sleep"]
-CMD ["100000000"]
+ENTRYPOINT ["search"]
 
-# using --config does not work
-#CMD ["--path=/var/lib/ci-search/", "--config=search_config.yaml", "-v=8"]
-# This next line works, just be patient and it will index
-#CMD ["--path=/var/lib/ci-search/", "--deck-uri=https://prow.ci.openshift.org", "--v=7"]
-# this is not limiting which jobs are indexed
-#CMD ["--path=/var/lib/ci-search/", "--deck-uri=https://prow.ci.openshift.org", "--v=7", "--job-uri-prefix=https://prow.ci.openshift.org/view/gs/origin-ci-test/logs/periodic-ci-openshift-oadp-operator-master-4.8-operator-e2e-gcp-periodic-slack"]
-
-#working
-#CMD ["--path=/var/lib/ci-search/", "--deck-uri=https://prow.ci.openshift.org", "--v=7"]
+CMD ["--path=/var/lib/ci-search/", "--deck-uri=https://prow.ci.openshift.org", "--v=7"]
 EXPOSE 8080

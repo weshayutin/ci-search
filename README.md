@@ -6,9 +6,13 @@ There are two primary components, the `search` binary which exposes the web inte
 
     make
 
+To start the search process with defaults at http://localhost:8080 run:
+    ./search --path /var/tmp/oadp_ci_search --deck-uri=https://prow.ci.openshift.org  --interval 15m --v 7
+
 To start the search process at http://localhost:8080 run:
 
     ./search --path /directory/to/cache/results --config testgrid-like-config.yaml --interval 15m
+
 
 `build-indexer` and either `grep` or `rg` (ripgrep) must be on the path.
 
