@@ -11,5 +11,7 @@ RUN mkdir /var/lib/ci-search && chown 1000:1000 /var/lib/ci-search && chmod 1777
 USER 1000:1000
 ENTRYPOINT ["search"]
 #CMD ["--path=/var/lib/ci-search/", "--config=search_config.yaml", "-v=8"]
-CMD ["--path=/var/lib/ci-search/", "--deck-uri=https://prow.ci.openshift.org", "--v=7"]
+# This next line works, just be patient and it will index
+#CMD ["--path=/var/lib/ci-search/", "--deck-uri=https://prow.ci.openshift.org", "--v=7"]
+CMD ["--path=/var/lib/ci-search/", "--deck-uri=https://prow.ci.openshift.org/?job=*oadp*", "--v=7"]
 EXPOSE 8080
