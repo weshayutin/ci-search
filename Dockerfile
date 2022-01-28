@@ -10,7 +10,8 @@ RUN curl -L https://github.com/BurntSushi/ripgrep/releases/download/12.0.1/ripgr
 RUN mkdir /var/lib/ci-search && chown 1000:1000 /var/lib/ci-search && chmod 1777 /var/lib/ci-search
 USER 1000:1000
 #ENTRYPOINT ["search"]
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["sleep"]
+CMD ["100000000"]
 
 # using --config does not work
 #CMD ["--path=/var/lib/ci-search/", "--config=search_config.yaml", "-v=8"]
