@@ -11,6 +11,7 @@ import (
 	"mime"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"k8s.io/klog"
 )
@@ -54,7 +55,15 @@ func (c *Client) ListJobs(ctx context.Context) ([]*Job, error) {
 	if err != nil {
 		return nil, err
 	}
-	return list.Items, nil
+	my_list := []*Job{}
+	for _, i := range list.Items {
+		if strings.Contains(i.Status.URL, "oadp") {
+			klog.Infof(i.Status.URL)
+			my_list = append(my_list, i)
+		}
+	}
+
+	return my_list, nil
 }
 
 func readJSONIntoObject(ctx context.Context, retries int, client *http.Client, fn func() (interface{}, *http.Request, error)) error {

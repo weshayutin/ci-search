@@ -19,8 +19,8 @@ import (
 	gcpoption "google.golang.org/api/option"
 	_ "modernc.org/sqlite"
 
-	"github.com/openshift/ci-search/metricdb"
-	"github.com/openshift/ci-search/prow"
+	"github.com/weshayutin/ci-search/metricdb"
+	"github.com/weshayutin/ci-search/prow"
 )
 
 func main() {

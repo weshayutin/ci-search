@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/openshift/ci-search/bugzilla"
+	"github.com/weshayutin/ci-search/bugzilla"
 )
 
 type Result struct {

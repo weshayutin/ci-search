@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/openshift/ci-search/pkg/httpwriter"
+	"github.com/weshayutin/ci-search/pkg/httpwriter"
 	"k8s.io/klog"
 )
 

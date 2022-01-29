@@ -7,8 +7,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/openshift/ci-search/pkg/httpwriter"
-	"github.com/openshift/ci-search/prow"
+	"github.com/weshayutin/ci-search/pkg/httpwriter"
+	"github.com/weshayutin/ci-search/prow"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/klog"
 )

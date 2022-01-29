@@ -33,12 +33,12 @@ import (
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/klog"
 
-	"github.com/openshift/ci-search/bugzilla"
-	"github.com/openshift/ci-search/metricdb"
-	"github.com/openshift/ci-search/metricdb/httpgraph"
-	"github.com/openshift/ci-search/pkg/bindata"
-	"github.com/openshift/ci-search/pkg/proc"
-	"github.com/openshift/ci-search/prow"
+	"github.com/weshayutin/ci-search/bugzilla"
+	"github.com/weshayutin/ci-search/metricdb"
+	"github.com/weshayutin/ci-search/metricdb/httpgraph"
+	"github.com/weshayutin/ci-search/pkg/bindata"
+	"github.com/weshayutin/ci-search/pkg/proc"
+	"github.com/weshayutin/ci-search/prow"
 )
 
 func main() {
@@ -432,6 +432,7 @@ func (o *options) Run() error {
 			klog.Exitf("Unable to parse --deck-uri: %v", err)
 		}
 		deckURI := u
+		// this is the initial list of all the jobs.
 		deckURI.Path = "/prowjobs.js"
 
 		rt, err := rest.TransportFor(&rest.Config{})
@@ -452,6 +453,7 @@ func (o *options) Run() error {
 				return prow.ReadFromIndex(ctx, gcsClient, o.IndexBucket, "job-state", o.MaxAge, *u)
 			})
 		}
+
 		informer := prow.NewInformer(2*time.Minute, 30*time.Minute, o.MaxAge, initialJobLister, c)
 		lister := prow.NewLister(informer.GetIndexer())
 		o.jobAccessor = lister

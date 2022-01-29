@@ -14,7 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/klog"
 
-	"github.com/openshift/ci-search/walk"
+	"github.com/weshayutin/ci-search/walk"
 )
 
 type PathAccessor interface {

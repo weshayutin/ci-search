@@ -77,7 +77,10 @@ func ReadFromIndex(ctx context.Context, client *storage.Client, bucket, indexNam
 		job.Name = fmt.Sprintf("gcs-%d", i)
 		job.Status.State = state
 		job.Status.CompletionTime = metav1.Time{Time: time.Unix(completed, 0)}
-		jobs = append(jobs, &job)
+		if strings.Contains(job.Status.URL, "oadp") {
+			jobs = append(jobs, &job)
+		}
+
 		return nil
 	}); err != nil {
 		if err == ctx.Err() {
@@ -154,7 +157,12 @@ func (i *Index) EachJob(ctx context.Context, client *storage.Client, limit int64
 
 		_, _, jobName, buildID, _, err := jobPathToAttributes(statusURL.Path, deckURL)
 		if err != nil {
-			klog.V(7).Infof("Unable to parse indexed link to a valid job: %s", link)
+			klog.V(7).Infof("FAKKKKKK Unable to parse indexed link to a valid job: %s", link)
+			return nil
+		}
+
+		if !(strings.Contains(jobName, "oadp")) {
+			klog.V(7).Infof("NOT OADP, dropping: %s", link)
 			return nil
 		}
 

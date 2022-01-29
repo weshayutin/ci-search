@@ -27,7 +27,7 @@ import (
 	"cloud.google.com/go/storage"
 	"github.com/golang/protobuf/proto"
 
-	"github.com/openshift/ci-search/testgrid/util/gcs"
+	"github.com/weshayutin/ci-search/testgrid/util/gcs"
 )
 
 func read(r io.Reader) (*Configuration, error) {

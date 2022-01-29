@@ -22,9 +22,9 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/klog"
 
-	"github.com/openshift/ci-search/bugzilla"
-	"github.com/openshift/ci-search/metricdb/httpgraph"
-	"github.com/openshift/ci-search/pkg/httpwriter"
+	"github.com/weshayutin/ci-search/bugzilla"
+	"github.com/weshayutin/ci-search/metricdb/httpgraph"
+	"github.com/weshayutin/ci-search/pkg/httpwriter"
 )
 
 type nopFlusher struct{}
@@ -323,7 +323,7 @@ func (o *options) handleIndex(w http.ResponseWriter, req *http.Request) {
 		} else {
 			fmt.Fprintf(writer, `%d runs matched in %s`, numRuns, time.Now().Sub(start).Truncate(time.Millisecond))
 		}
-		fmt.Fprintf(writer, `</em> - <a href="/">clear search</a> | <a href="/chart?%s">chart view</a> - source code located <a target="_blank" href="https://github.com/openshift/ci-search">on github</a></p>`, template.HTMLEscapeString(req.URL.RawQuery))
+		fmt.Fprintf(writer, `</em> - <a href="/">clear search</a> | <a href="/chart?%s">chart view</a> - source code located <a target="_blank" href="https://github.com/weshayutin/ci-search">on github</a></p>`, template.HTMLEscapeString(req.URL.RawQuery))
 
 		if numRuns == 0 && len(result.Bugs) == 0 {
 			fmt.Fprintf(writer, `<p style="padding-top: 1em;"><em>No results found.</em></p><p><em>Search uses <a target="_blank" href="https://docs.rs/regex/0.2.5/regex/#syntax">ripgrep regular-expression patterns</a> to find results. Try simplifying your search or using case-insensitive options.</em></p>`)
@@ -340,7 +340,7 @@ func (o *options) handleIndex(w http.ResponseWriter, req *http.Request) {
 		klog.V(2).Infof("Search %q over %q for job %s/%s completed with %d results", index.Search[0], index.SearchType, index.IncludeName, index.ExcludeName, count)
 		fmt.Fprintf(writer, `<p style="position:absolute; top: -2rem;" class="small"><em>`)
 		fmt.Fprintf(writer, `Found %d results in %s`, count, time.Now().Sub(start).Truncate(time.Millisecond))
-		fmt.Fprintf(writer, `</em> - <a href="/">clear search</a> | <a href="/chart?%s">chart view</a> - source code located <a target="_blank" href="https://github.com/openshift/ci-search">on github</a></p>`, template.HTMLEscapeString(req.URL.RawQuery))
+		fmt.Fprintf(writer, `</em> - <a href="/">clear search</a> | <a href="/chart?%s">chart view</a> - source code located <a target="_blank" href="https://github.com/weshayutin/ci-search">on github</a></p>`, template.HTMLEscapeString(req.URL.RawQuery))
 		if count == 0 {
 			fmt.Fprintf(writer, `<p style="padding-top: 1em;"><em>No results found.</em></p><p><em>Search uses <a target="_blank" href="https://docs.rs/regex/0.2.5/regex/#syntax">ripgrep regular-expression patterns</a> to find results. Try simplifying your search or using case-insensitive options.</em></p>`)
 		}
@@ -749,7 +749,7 @@ function tooltipPlugin(opts) {
 		}
 	};
 }
-function getSize() { 
+function getSize() {
 	let o = document.getElementById("width")
 	let w = o.scrollWidth
 	if (w < 320)
@@ -758,7 +758,7 @@ function getSize() {
 		div = (w - 320) / (1024-320) * 6 + 2
 	else
 		div = 8
-	return { width: w, height: w / div,	} 
+	return { width: w, height: w / div,	}
 }
 const opts = {
 	legend: {show: false},
