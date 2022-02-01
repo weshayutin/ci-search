@@ -38,6 +38,18 @@ The search binary shells out to `rg` or `grep` (`rg` preferred for performance a
   * prow/process.go:495
   * prow/index.go:165
 
+## To create a smaller prowjobs.js file, reduce time to code
+```
+wget https://prow.ci.openshift.org/prowjobs.js
+fold -w 100 -s prowjobs.js
+# then create a couple rows of data
+ awk '{ printf "%s", $0 }' test_prowjobs.js  > good_test_prowjobs.js
+
+```
+
+## smaller copy of prowjobs.js
+* serve_custom_prowjobs.sh
+
 ## Deploying in OpenShift
 
 * note the cluster must be setup with OCS with google storage backing.
