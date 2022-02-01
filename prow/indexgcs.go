@@ -157,7 +157,7 @@ func (i *Index) EachJob(ctx context.Context, client *storage.Client, limit int64
 
 		_, _, jobName, buildID, _, err := jobPathToAttributes(statusURL.Path, deckURL)
 		if err != nil {
-			klog.V(7).Infof("FAKKKKKK Unable to parse indexed link to a valid job: %s", link)
+			klog.V(7).Infof("Unable to parse indexed link to a valid job: %s", link)
 			return nil
 		}
 

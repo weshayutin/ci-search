@@ -494,6 +494,8 @@ func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *st
 
 func (a *LogAccumulator) Artifacts(ctx context.Context, artifacts <-chan *storage.ObjectAttrs, unprocessedArtifacts chan<- *storage.ObjectAttrs) error {
 	var wg sync.WaitGroup
+	log.Printf("WES ctx: " + ctx.String)
+	log.Printf("WES artifacts: " + artifacts)
 	ec := make(chan error)
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()

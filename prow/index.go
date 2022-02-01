@@ -194,6 +194,7 @@ func (s *DiskStore) write(ctx context.Context, job *Job, notifier PathNotifier) 
 	}
 	start := time.Now()
 	accumulator, stale := NewAccumulator(s.base, &build, job.Status.CompletionTime.Time)
+	klog.V(7).Info("WES: s.base: " + s.base)
 	if !stale {
 		klog.V(7).Infof("Job %s is up to date", job.Status.URL)
 		return nil, nil
