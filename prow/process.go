@@ -207,6 +207,10 @@ func NewAccumulator(base string, build *gcs.Build, modifiedBefore time.Time) (*L
 	number := path.Base(build.Prefix)
 	buildPath := filepath.Join(base, build.BucketPath, prefix)
 
+	klog.Infof("WES: prefix: " + prefix)
+	klog.Infof("WES: number: " + number)
+	klog.Infof("WES: buildPath: " + buildPath)
+
 	if !modifiedBefore.IsZero() {
 		if fi, err := os.Stat(buildPath); err == nil {
 			mod := fi.ModTime()
@@ -494,8 +498,8 @@ func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *st
 
 func (a *LogAccumulator) Artifacts(ctx context.Context, artifacts <-chan *storage.ObjectAttrs, unprocessedArtifacts chan<- *storage.ObjectAttrs) error {
 	var wg sync.WaitGroup
-	log.Printf("WES ctx: " + ctx.String)
-	log.Printf("WES artifacts: " + artifacts)
+	// log.Printf("WES ctx: " + ctx.String)
+	// log.Printf("WES artifacts: " + artifacts)
 	ec := make(chan error)
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
