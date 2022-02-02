@@ -31,9 +31,12 @@ func (l *CachingLister) ListJobs(ctx context.Context) ([]*Job, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		klog.Infof("WES: jobs: "+"%v", jobs)
 		l.jobs = jobs
 		return jobs, nil
 	}
+	klog.Infof("WES: l.jobs: "+"%v", l.jobs)
 	return l.jobs, nil
 }
 
@@ -41,6 +44,7 @@ func (l *CachingLister) ListJobs(ctx context.Context) ([]*Job, error) {
 // them. Jobs older than maxAge are not loaded. statusURL will form the status URL for a given job if the job's link attribute in the
 // index can be parsed.
 func ReadFromIndex(ctx context.Context, client *storage.Client, bucket, indexName string, maxAge time.Duration, statusURL url.URL) ([]*Job, error) {
+	//klog.V(5).Infof(reflect.TypeOf(ctx))
 	index := &Index{
 		Bucket:    bucket,
 		IndexName: indexName,
@@ -50,8 +54,14 @@ func ReadFromIndex(ctx context.Context, client *storage.Client, bucket, indexNam
 	index.FromTime(start.Add(-maxAge))
 	index.ToTime(start)
 
-	jobs := make([]*Job, 0, 2048)
+	// WES: TODO REMOVE ME
+	jobs := make([]*Job, 0, 10)
+	//jobs := make([]*Job, 0, 2048)
+
 	i := 0
+	klog.Infof("WES indexName: " + indexName)
+	// hrm.. WES indexName: job-state
+	klog.Infof("WES statusURL: " + statusURL)
 	if err := index.EachJob(ctx, client, 0, statusURL, func(job Job, attr *storage.ObjectAttrs) error {
 		state, ok := attr.Metadata["state"]
 		if !ok {
@@ -154,6 +164,7 @@ func (i *Index) EachJob(ctx context.Context, client *storage.Client, limit int64
 
 		statusURL.Path = "/view/gcs/" + strings.TrimPrefix(link, "gs://")
 		deckURL := statusURL.String()
+		klog.V(7).Infof("WES: DECKURL: " + deckURL)
 
 		_, _, jobName, buildID, _, err := jobPathToAttributes(statusURL.Path, deckURL)
 		if err != nil {

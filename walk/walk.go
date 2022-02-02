@@ -1,6 +1,7 @@
 package walk
 
 import (
+	//"k8s.io/klog"
 	"os"
 	"path/filepath"
 )
@@ -8,6 +9,8 @@ import (
 // Walk behaves like filepath.Walk, except it does not sort
 // the directory entries.
 func Walk(root string, walkFn filepath.WalkFunc) error {
+	// Wes This is walking the local filesystem
+	//klog.Infof("WES: WALK ROOT: " + root)
 	info, err := os.Lstat(root)
 	if err != nil {
 		err = walkFn(root, nil, err)
@@ -22,6 +25,8 @@ func Walk(root string, walkFn filepath.WalkFunc) error {
 
 // walk recursively descends path, calling walkFn.
 func walk(path string, info os.FileInfo, walkFn filepath.WalkFunc) error {
+	// Wes This is walking the local filesystem
+	//klog.Infof("WES: walk: " + path)
 	if !info.IsDir() {
 		return walkFn(path, info, nil)
 	}
