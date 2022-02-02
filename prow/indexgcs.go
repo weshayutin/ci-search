@@ -86,7 +86,6 @@ func ReadFromIndex(ctx context.Context, client *storage.Client, bucket, indexNam
 			return nil
 		}
 		i++
-		klog.Infof("WES INDEX COUNT: " + string(i))
 		job.Name = fmt.Sprintf("gcs-%d", i)
 		job.Status.State = state
 		job.Status.CompletionTime = metav1.Time{Time: time.Unix(completed, 0)}
