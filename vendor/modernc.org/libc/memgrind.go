@@ -15,7 +15,6 @@ import (
 	"runtime"
 	"sort"
 	"strings"
-	"unsafe"
 
 	"modernc.org/libc/errno"
 	"modernc.org/libc/sys/types"
@@ -81,7 +80,7 @@ func Xmalloc(t *TLS, size types.Size_t) uintptr {
 
 	defer allocMu.Unlock()
 
-	p, err := allocator.UintptrCalloc(int(size))
+	p, err := allocator.UintptrMalloc(int(size))
 	if dmesgs {
 		dmesg("%v: %v -> %#x, %v", origin(1), size, p, err)
 	}
@@ -209,7 +208,6 @@ func Xfree(t *TLS, p uintptr) {
 
 	defer allocMu.Unlock()
 
-	sz := UsableSize(p)
 	if memAuditEnabled {
 		pc, _, _, ok := runtime.Caller(1)
 		if !ok {
@@ -231,9 +229,6 @@ func Xfree(t *TLS, p uintptr) {
 		frees[p] = pc
 	}
 
-	for i := uintptr(0); i < uintptr(sz); i++ {
-		*(*byte)(unsafe.Pointer(p + i)) = 0
-	}
 	allocator.UintptrFree(p)
 }
 
@@ -254,7 +249,7 @@ func UsableSize(p uintptr) types.Size_t {
 }
 
 // MemAuditStart locks the memory allocator, initializes and enables memory
-// auditing. Finally it unlocks the memory allocator.
+// auditing. Finaly it unlocks the memory allocator.
 //
 // Some memory handling errors, like double free or freeing of unallocated
 // memory, will panic when memory auditing is enabled.

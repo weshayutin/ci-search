@@ -19,6 +19,8 @@ import (
 	"sort"
 	"strings"
 	"sync"
+
+	"modernc.org/mathutil"
 )
 
 var (
@@ -268,10 +270,6 @@ type Type interface {
 	// FieldByName returns the struct field with the given name and a
 	// boolean indicating if the field was found.
 	FieldByName(name StringID) (Field, bool)
-
-	// FieldByName2 is like FieldByName but additionally returns the
-	// indices that form the path to the field.
-	FieldByName2(name StringID) (Field, []int, bool)
 
 	// IsAggregate reports whether type is an aggregate type, [0]6.2.5.
 	//
@@ -1014,15 +1012,6 @@ func (t *typeBase) FieldByName(StringID) (Field, bool) {
 	}
 
 	panic(internalErrorf("%s: FieldByName of invalid type", t.Kind()))
-}
-
-// FieldByName2 implements Type.
-func (t *typeBase) FieldByName2(StringID) (Field, []int, bool) {
-	if t.Kind() == Invalid {
-		return nil, nil, false
-	}
-
-	panic(internalErrorf("%s: FieldByName2 of invalid type", t.Kind()))
 }
 
 // IsIncomplete implements Type.
@@ -1858,9 +1847,6 @@ func (t *aliasType) FieldByIndex(i []int) Field { return t.d.Type().FieldByIndex
 // FieldByName implements Type.
 func (t *aliasType) FieldByName(s StringID) (Field, bool) { return t.d.Type().FieldByName(s) }
 
-// FieldByName2 implements Type.
-func (t *aliasType) FieldByName2(s StringID) (Field, []int, bool) { return t.d.Type().FieldByName2(s) }
-
 // IsIncomplete implements Type.
 func (t *aliasType) IsIncomplete() bool { return t.d.Type().IsIncomplete() }
 
@@ -2005,17 +1991,16 @@ func (f *field) BitFieldBlockWidth() int       { return int(f.blockWidth) }
 func (f *field) BitFieldOffset() int           { return int(f.bitFieldOffset) }
 func (f *field) BitFieldWidth() int            { return int(f.bitFieldWidth) }
 func (f *field) Declarator() *StructDeclarator { return f.d }
-func (f *field) InUnion() bool                 { return f.inUnion }
 func (f *field) Index() int                    { return f.x }
 func (f *field) IsBitField() bool              { return f.isBitField }
 func (f *field) IsFlexible() bool              { return f.isFlexible }
+func (f *field) InUnion() bool                 { return f.inUnion }
 func (f *field) Mask() uint64                  { return f.bitFieldMask }
 func (f *field) Name() StringID                { return f.name }
 func (f *field) Offset() uintptr               { return f.offset }
 func (f *field) Padding() int                  { return int(f.pad) } // N/A for bitfields
 func (f *field) Promote() Type                 { return f.promote }
 func (f *field) Type() Type                    { return f.typ }
-func (f *field) at(offDelta uintptr) *field    { r := *f; f.offset += offDelta; return &r }
 
 func (f *field) string(b *bytes.Buffer) {
 	b.WriteString(f.name.String())
@@ -2026,25 +2011,13 @@ func (f *field) string(b *bytes.Buffer) {
 	f.typ.string(b)
 }
 
-type fieldPath struct {
-	fld  *field
-	path []int
-
-	ambiguous bool
-}
-
-func (f *fieldPath) String() string {
-	return fmt.Sprintf("%q %v %v", f.fld.name, f.path, f.ambiguous)
-}
-
 type structType struct {
 	*typeBase
 
 	attr   []*AttributeSpecifier
-	common Kind
 	fields []*field
 	m      map[StringID]*field
-	paths  map[StringID]*fieldPath
+	common Kind
 
 	tag StringID
 
@@ -2354,60 +2327,35 @@ func (t *structType) FieldByIndex(i []int) Field {
 
 // FieldByName implements Type.
 func (t *structType) FieldByName(name StringID) (Field, bool) {
-	if f := t.m[name]; f != nil {
-		return f, true
-	}
+	best := mathutil.MaxInt
+	return t.fieldByName(name, 0, &best, 0)
+}
 
-	if t.paths == nil {
-		t.paths = map[StringID]*fieldPath{}
-		t.computePaths(0, t.paths, nil)
-	}
-	nfo := t.paths[name]
-	if nfo == nil || nfo.ambiguous {
+func (t *structType) fieldByName(name StringID, lvl int, best *int, off uintptr) (Field, bool) {
+	if lvl >= *best {
 		return nil, false
 	}
 
-	return nfo.fld, true
-}
-
-// FieldByName2 implements Type.
-func (t *structType) FieldByName2(name StringID) (Field, []int, bool) {
-	if t.paths == nil {
-		t.paths = map[StringID]*fieldPath{}
-		t.computePaths(0, t.paths, nil)
-	}
-	nfo := t.paths[name]
-	if nfo == nil || nfo.ambiguous {
-		return nil, nil, false
+	if f, ok := t.m[name]; ok {
+		*best = lvl
+		if off != 0 {
+			g := *f
+			g.offset += off //TODO this does not seem ok
+			f = &g
+		}
+		return f, ok
 	}
 
-	return nfo.fld, nfo.path, true
-}
-
-func (t *structType) computePaths(off uintptr, paths map[StringID]*fieldPath, path []int) {
-	path = append(path, 0)
-	for i, f := range t.fields {
-		nm := f.Name()
-		path[len(path)-1] = i
-		if nm != 0 {
-			switch ex := paths[nm]; {
-			case ex != nil:
-				switch {
-				case len(path) < len(ex.path):
-					ex.fld = f.at(off)
-					ex.path = append([]int(nil), path...)
-					ex.ambiguous = false
-				case len(path) == len(ex.path):
-					ex.ambiguous = true
-				}
-			default:
-				paths[nm] = &fieldPath{fld: f.at(off), path: append([]int(nil), path...)}
+	for _, f := range t.fields {
+		switch x := f.Type().(type) {
+		case *structType:
+			if f, ok := x.fieldByName(name, lvl+1, best, off+f.offset); ok {
+				return f, ok
 			}
 		}
-		if x, ok := f.Type().underlyingType().(*structType); ok {
-			x.computePaths(off+f.Offset(), paths, path)
-		}
 	}
+
+	return nil, false
 }
 
 // NumField implements Type.

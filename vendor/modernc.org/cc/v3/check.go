@@ -282,6 +282,7 @@ func (n *Initializer) check(ctx *context, list *[]*Initializer, t Type, sc Stora
 	if t.IsScalarType() && single != nil {
 		//TODO check compatible
 		*list = append(*list, single)
+		op := n.AssignmentExpression.check(ctx)
 		switch {
 		case op == nil || op.Value() == nil:
 			n.isConst = false
@@ -701,7 +702,7 @@ func (n *InitializerList) check(ctx *context, list *[]*Initializer, t Type, sc S
 
 		return n.checkUnion(ctx, list, t, sc, off)
 	default:
-		if n == nil || t == nil || t.Kind() == Invalid {
+		if n == nil {
 			return nil
 		}
 
@@ -1429,7 +1430,7 @@ func (n *PostfixExpression) addrOf(ctx *context) Operand {
 
 		f, ok := st.FieldByName(n.Token2.Value)
 		if !ok {
-			ctx.errNode(&n.Token2, "unknown or ambiguous field: %s", n.Token2.Value)
+			//TODO report error
 			break
 		}
 

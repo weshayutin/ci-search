@@ -85,18 +85,6 @@ github.com/matttproud/golang_protobuf_extensions/pbutil
 github.com/modern-go/concurrent
 # github.com/modern-go/reflect2 v1.0.1
 github.com/modern-go/reflect2
-# github.com/weshayutin/ci-search v0.0.0-20220120220128-8449c154871a
-github.com/weshayutin/ci-search/bugzilla
-github.com/weshayutin/ci-search/metricdb
-github.com/weshayutin/ci-search/metricdb/httpgraph
-github.com/weshayutin/ci-search/pkg/bindata
-github.com/weshayutin/ci-search/pkg/httpwriter
-github.com/weshayutin/ci-search/pkg/proc
-github.com/weshayutin/ci-search/prow
-github.com/weshayutin/ci-search/testgrid/metadata
-github.com/weshayutin/ci-search/testgrid/metadata/junit
-github.com/weshayutin/ci-search/testgrid/util/gcs
-github.com/weshayutin/ci-search/walk
 # github.com/pkg/profile v1.5.0
 github.com/pkg/profile
 # github.com/prometheus/client_golang v0.9.3
@@ -398,11 +386,11 @@ k8s.io/utils/diff
 k8s.io/utils/field
 k8s.io/utils/integer
 k8s.io/utils/trace
-# modernc.org/cc/v3 v3.32.1
+# modernc.org/cc/v3 v3.31.5-0.20210308123301-7a3e9dab9009
 modernc.org/cc/v3
-# modernc.org/ccgo/v3 v3.9.1
+# modernc.org/ccgo/v3 v3.9.0
 modernc.org/ccgo/v3/lib
-# modernc.org/libc v1.8.1
+# modernc.org/libc v1.8.0
 modernc.org/libc
 modernc.org/libc/errno
 modernc.org/libc/fcntl
@@ -435,7 +423,7 @@ modernc.org/opt
 # modernc.org/sqlite v1.10.0
 modernc.org/sqlite
 modernc.org/sqlite/lib
-# modernc.org/strutil v1.1.1
+# modernc.org/strutil v1.1.0
 modernc.org/strutil
 # modernc.org/token v1.0.0
 modernc.org/token

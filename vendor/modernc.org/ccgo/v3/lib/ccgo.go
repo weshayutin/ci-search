@@ -35,30 +35,7 @@ import (
 	"modernc.org/opt"
 )
 
-const (
-	Version = "3.9.1"
-
-	experimentsEnvVar = "CCGO_EXPERIMENT"
-	maxSourceLine     = 1 << 20
-)
-
-var (
-	coverExperiment bool
-)
-
-func init() {
-	s := strings.TrimSpace(os.Getenv(experimentsEnvVar))
-	if s == "" {
-		return
-	}
-
-	for _, v := range strings.Split(s, ",") {
-		switch strings.TrimSpace(v) {
-		case "cover":
-			coverExperiment = true
-		}
-	}
-}
+const Version = "3.8.19"
 
 //TODO CPython
 //TODO Cython
@@ -374,8 +351,8 @@ type Task struct {
 	nostdinc              bool // -nostdinc
 	nostdlib              bool // -nostdlib
 	panicStubs            bool // -panic-stubs
-	tracePinning          bool // -trace-pinning
 	traceTranslationUnits bool // -trace-translation-units
+	tracePinning          bool // -trace-pinning
 	verifyStructs         bool // -verify-structs
 	version               bool // -version
 	watch                 bool // -watch-instrumentation
@@ -396,9 +373,6 @@ func NewTask(args []string, stdout, stderr io.Writer) *Task {
 	return &Task{
 		args: args,
 		cfg: &cc.Config{
-			Config3: cc.Config3{
-				MaxSourceLine: maxSourceLine,
-			},
 			DoNotTypecheckAsm:                     true,
 			EnableAssignmentCompatibilityChecking: true,
 			LongDoubleIsDouble:                    true,
@@ -577,11 +551,6 @@ func (t *Task) Main() (err error) {
 			}
 		}()
 
-	}
-	if !t.isScripted && coverExperiment {
-		defer func() {
-			fmt.Fprintf(os.Stderr, "cover report:\n%s\n", coverReport())
-		}()
 	}
 	if t.CallOutBinary != "" {
 		if dmesgs {
