@@ -449,7 +449,7 @@ func (o *options) Run() error {
 
 		var initialJobLister prow.JobLister
 		if len(o.IndexBucket) > 0 {
-			klog.Fatalf("stop here")
+			//klog.Fatalf("stop here")
 			initialJobLister = prow.ListerFunc(func(ctx context.Context) ([]*prow.Job, error) {
 				// this is the critical spot in the code where it starts
 				// to index all the jobs in gs under origin-ci-test
