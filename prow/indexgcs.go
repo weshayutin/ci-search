@@ -61,7 +61,9 @@ func ReadFromIndex(ctx context.Context, client *storage.Client, bucket, indexNam
 	i := 0
 	klog.Infof("WES indexName: " + indexName)
 	// hrm.. WES indexName: job-state
-	klog.Infof("WES statusURL: " + statusURL)
+	klog.Infof("WES statusURL: " + statusURL.String())
+	klog.Infof("WES job: "+"%v", jobs)
+	// this is the HOLE
 	if err := index.EachJob(ctx, client, 0, statusURL, func(job Job, attr *storage.ObjectAttrs) error {
 		state, ok := attr.Metadata["state"]
 		if !ok {
@@ -84,6 +86,7 @@ func ReadFromIndex(ctx context.Context, client *storage.Client, bucket, indexNam
 			return nil
 		}
 		i++
+		klog.Infof("WES INDEX COUNT: " + string(i))
 		job.Name = fmt.Sprintf("gcs-%d", i)
 		job.Status.State = state
 		job.Status.CompletionTime = metav1.Time{Time: time.Unix(completed, 0)}
@@ -99,6 +102,8 @@ func ReadFromIndex(ctx context.Context, client *storage.Client, bucket, indexNam
 		klog.Errorf("scan failed, will retry: %v", err)
 	}
 	klog.V(5).Infof("Found %d jobs in %s", len(jobs), time.Now().Sub(start))
+	//klog.Infof("WES jobs: "+"%v", jobs)
+	//klog.Fatalf("stop")
 	return jobs, nil
 }
 
