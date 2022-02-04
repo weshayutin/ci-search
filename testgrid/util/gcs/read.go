@@ -240,8 +240,8 @@ func (build Build) Artifacts(artifacts chan<- *storage.ObjectAttrs) error {
 			break
 		}
 		if err != nil {
-			break
-			//return fmt.Errorf("failed to list %s: %v", pref, err)
+			//break
+			return fmt.Errorf("failed to list %s: %v", pref, err)
 		}
 		select {
 		case <-build.Context.Done():

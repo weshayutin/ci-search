@@ -409,8 +409,9 @@ func (a *LogAccumulator) waitMetadata(ctx context.Context) bool {
 	}
 }
 
-func (a *LogAccumulator) downloadIfMissing(ctx context.Context, artifact *storage.ObjectAttrs, base string) error {
-	for _, s := range []string{base, base + ".gz"} {
+//func (a *LogAccumulator) downloadIfMissing(ctx context.Context, artifact *storage.ObjectAttrs, base string) error {
+func (a *LogAccumulator) downloadIfMissing(ctx context.Context, artifact *storage.ObjectAttrs) error {
+	for _, s := range []string{artifact.Name, artifact.Name + ".gz"} {
 		if _, ok := a.exists[s]; ok {
 			return nil
 		}
@@ -419,9 +420,11 @@ func (a *LogAccumulator) downloadIfMissing(ctx context.Context, artifact *storag
 		return err
 	}
 	if artifact.Size > 1*1024*1024 {
-		base += ".gz"
+		artifact.Name += ".gz"
 	}
-	f, err := os.Create(filepath.Join(a.path, base))
+	//f, err := os.Create(filepath.Join(a.path, base))
+	// THIS IS WHERE IT DOWNLOADS
+	f, err := os.Create(filepath.Join(a.path, artifact.Name))
 	if err != nil {
 		return err
 	}
@@ -452,8 +455,9 @@ func (a *LogAccumulator) downloadIfMissing(ctx context.Context, artifact *storag
 	return nil
 }
 
-func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *storage.ObjectAttrs, base string, length int64) error {
-	for _, s := range []string{base, base + ".gz"} {
+//func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *storage.ObjectAttrs, base string, length int64) error {
+func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *storage.ObjectAttrs, length int64) error {
+	for _, s := range []string{artifact.Name, artifact.Name + ".gz"} {
 		if _, ok := a.exists[s]; ok {
 			return nil
 		}
@@ -462,9 +466,9 @@ func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *st
 		return err
 	}
 	if artifact.Size > 1*1024*1024 {
-		base += ".gz"
+		artifact.Name += ".gz"
 	}
-	f, err := os.Create(filepath.Join(a.path, base))
+	f, err := os.Create(filepath.Join(a.path, artifact.Name))
 	if err != nil {
 		return err
 	}
@@ -509,7 +513,7 @@ func (a *LogAccumulator) Artifacts(ctx context.Context, artifacts <-chan *storag
 			rel = art.Name[len(a.build.Prefix):]
 		}
 		switch {
-		case rel == "build-log.txt":
+		case rel != "":
 			wg.Add(1)
 			go func(art *storage.ObjectAttrs) {
 				defer wg.Done()
@@ -517,7 +521,8 @@ func (a *LogAccumulator) Artifacts(ctx context.Context, artifacts <-chan *storag
 				if !a.waitMetadata(ctx) || a.succeeded || a.finished == 0 {
 					return
 				}
-				if err := a.downloadIfMissingTail(ctx, art, "build-log.txt", 20*1024*1024); err != nil {
+				//if err := a.downloadIfMissingTail(ctx, art, "build-log.txt", 20*1024*1024); err != nil {
+				if err := a.downloadIfMissingTail(ctx, art, 20*1024*1024); err != nil {
 					log.Printf("error: Unable to download %s: %v", art.Name, err)
 					select {
 					case <-ctx.Done():
