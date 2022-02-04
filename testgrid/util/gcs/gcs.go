@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"hash/crc32"
+	"k8s.io/klog"
 	"log"
 	"net/url"
 	"strings"
@@ -64,6 +65,7 @@ func (g Path) String() string {
 // Set updates value from a gs://bucket/obj string, validating errors.
 func (g *Path) Set(v string) error {
 	u, err := url.Parse(v)
+	klog.Info("GOOGLE STORAGE OBJECT URL: " + u.String())
 	if err != nil {
 		return fmt.Errorf("invalid gs:// url %s: %v", v, err)
 	}

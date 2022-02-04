@@ -254,6 +254,7 @@ func jobPathToAttributes(path, full string) (bucket, trigger, job, buildID strin
 	if len(parts) < 5 {
 		return
 	}
+	//klog.Infof("WES! parts: " + parts[0])
 	if parts[0] != "view" || (parts[1] != "gcs" && parts[1] != "gs") {
 		return
 	}

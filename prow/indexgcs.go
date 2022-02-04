@@ -168,17 +168,19 @@ func (i *Index) EachJob(ctx context.Context, client *storage.Client, limit int64
 
 		statusURL.Path = "/view/gcs/" + strings.TrimPrefix(link, "gs://")
 		deckURL := statusURL.String()
-		klog.V(7).Infof("WES: DECKURL: " + deckURL)
 
 		_, _, jobName, buildID, _, err := jobPathToAttributes(statusURL.Path, deckURL)
 		if err != nil {
-			klog.V(7).Infof("Unable to parse indexed link to a valid job: %s", link)
+			//klog.V(7).Infof("Unable to parse indexed link to a valid job: %s", link)
 			return nil
 		}
 
 		if !(strings.Contains(jobName, "oadp")) {
-			klog.V(7).Infof("NOT OADP, dropping: %s", link)
+			//klog.V(7).Infof("NOT OADP, dropping: %s", link)
 			return nil
+		} else {
+			klog.V(7).Infof("WES: DECKURL: " + deckURL)
+			klog.V(7).Infof("FOUND OADP, keeping: %s", link)
 		}
 
 		err = fn(Job{

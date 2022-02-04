@@ -60,8 +60,10 @@ func (c *Client) ListJobs(ctx context.Context) ([]*Job, error) {
 	my_list := []*Job{}
 	for _, i := range list.Items {
 		if strings.Contains(i.Status.URL, "oadp") {
-			klog.Infof(i.Status.URL)
-			my_list = append(my_list, i)
+			if strings.Contains(i.Status.URL, "e2e") {
+				klog.Infof(i.Status.URL)
+				my_list = append(my_list, i)
+			}
 		}
 	}
 

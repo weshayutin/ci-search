@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"k8s.io/klog"
 	"net/url"
 	"regexp"
 	"sort"
@@ -225,17 +226,22 @@ func (build Build) Finished() (*Finished, error) {
 
 // Artifacts writes the object name of all paths under the build's artifact dir to the output channel.
 func (build Build) Artifacts(artifacts chan<- *storage.ObjectAttrs) error {
-	pref := build.Prefix
+	pref := build.Prefix + "artifacts/operator-e2e/gather-extra/artifacts/pods/"
 	query := &storage.Query{Prefix: pref}
 	query.SetAttrSelection([]string{"Name", "Size"})
 	objs := build.Bucket.Objects(build.Context, query)
 	for {
 		obj, err := objs.Next()
+		if obj != nil {
+			klog.Infof("WES obj ***: " + obj.Name)
+		}
+
 		if err == iterator.Done {
 			break
 		}
 		if err != nil {
-			return fmt.Errorf("failed to list %s: %v", pref, err)
+			break
+			//return fmt.Errorf("failed to list %s: %v", pref, err)
 		}
 		select {
 		case <-build.Context.Done():
