@@ -33,6 +33,11 @@ test_groups:
 
 The search binary shells out to `rg` or `grep` (`rg` preferred for performance and better search options) and summarize the results it finds in modification order. Results are linked to the prow job result gubernator page.
 
+## egrep suggestion:
+```
+egrep -rn gcs --exclude=*.js* --exclude-dir=vendor
+```
+
 ## Updating which files are indexed.
 * files of interest
   * prow/process.go:495

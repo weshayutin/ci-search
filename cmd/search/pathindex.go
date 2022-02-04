@@ -61,6 +61,7 @@ func (index *pathIndex) parseJobPath(path string) (*Result, error) {
 	last := len(parts) - 1
 
 	result.URI = index.baseURI.ResolveReference(&url.URL{Path: strings.Join(parts[:last], "/")})
+	klog.Infof("WES result.URI: " + result.URI.String())
 
 	switch parts[last] {
 	case "build-log.txt":
