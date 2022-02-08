@@ -39,6 +39,7 @@ type ripgrepGenerator struct {
 
 func (g ripgrepGenerator) Command(index *Index, search string, jobNames sets.String) (string, []string, []string, error) {
 	args := []string{g.execPath, "-a", "-z", "-u", "--color", "never", "-S", "--null", "--no-line-number", "--no-heading"}
+	klog.Info("WES SEARCH CONTEXT: " + strconv.Itoa(index.Context))
 	if index.Context >= 0 {
 		args = append(args, "--context", strconv.Itoa(index.Context))
 	} else {
@@ -55,6 +56,10 @@ func (g ripgrepGenerator) Command(index *Index, search string, jobNames sets.Str
 	}
 	args = append(args, search)
 	newArgs, paths, err := g.arguments.RipgrepSourceArguments(index, jobNames)
+	// WES override
+	//newArgs[0] = "--glob"
+	//newArgs[1] = "*.log"
+	//newArgs[2] = "/var/tmp/oadp_ci_search/jobs"
 	if err != nil {
 		return "", nil, nil, err
 	}
@@ -112,7 +117,7 @@ func splitStringSliceByLength(arr []string, maxLength int) ([]string, []string) 
 }
 
 func executeGrepSingle(ctx context.Context, gen CommandGenerator, index *Index, search string, jobNames sets.String, fn GrepFunc) error {
-	commandPath, commandArgs, commandPaths, err := gen.Command(index, search, jobNames)
+	_, commandArgs, _, err := gen.Command(index, search, jobNames)
 	if err != nil {
 		return err
 	}
@@ -131,15 +136,19 @@ func executeGrepSingle(ctx context.Context, gen CommandGenerator, index *Index, 
 	maxBytes := index.MaxBytes
 	pathPrefix := gen.PathPrefix()
 
-	for len(commandPaths) > 0 {
+	for 1 > 0 {
+		// the full args are added later, this is again appending
 		var args []string
-		args, commandPaths = splitStringSliceByLength(commandPaths, maxArgs)
+		var commandPaths = []string{"/usr/bin", "/bin/"}
+		klog.Infof("commandPaths: "+"%s ", commandPaths)
+		/*args, commandPaths = splitStringSliceByLength(commandPaths, maxArgs)
 		if len(args) == 0 {
 			return fmt.Errorf("argument longer than maximum shell length")
-		}
+		}*/
 
 		cmd := &exec.Cmd{}
-		cmd.Path = commandPath
+		//cmd.Path = commandPath
+		cmd.Path = "/tmp/"
 		cmd.Args = append(commandArgs, args...)
 		bytesRead, err := runSingleCommand(ctx, cmd, pathPrefix, index, maxBytes, search, fn)
 		if err != nil && err != io.EOF {

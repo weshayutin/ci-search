@@ -242,11 +242,14 @@ func (o *options) RipgrepSourceArguments(index *Index, jobNames sets.String) ([]
 		if paths == nil {
 			if names := o.jobsIndex.FilenamesForSearchType(index.SearchType); len(names) > 0 {
 				for _, name := range names {
+					// WES: this is where build-log.txt is appended to the search term
 					args = append(args, "--glob", name+"*")
+					//args = append(args, "--glob", "*.log")
 				}
 				args = append(args, o.jobsPath)
 			}
 		}
+		args = []string{"--glob", "*.log", "/var/tmp/oadp_ci_search/jobs"}
 		return args, append(paths, additionalPaths...), nil
 	}
 }

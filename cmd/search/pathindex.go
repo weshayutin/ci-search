@@ -98,6 +98,7 @@ func (index *pathIndex) parseJobPath(path string) (*Result, error) {
 func (index *pathIndex) LastModified(path string) time.Time {
 	index.lock.Lock()
 	defer index.lock.Unlock()
+	klog.Info("WES: Index PATH: " + path)
 	if position, ok := index.pathIndex[path]; ok {
 		return index.ordered[position].age
 	}
@@ -122,6 +123,7 @@ func (index *pathIndex) Load() error {
 	stats := PathIndexStats{}
 
 	err = walk.Walk(index.base, func(path string, info os.FileInfo, err error) error {
+		klog.Info("WES: Index walk path: " + path)
 		if err != nil {
 			if os.IsNotExist(err) {
 				return nil
