@@ -148,7 +148,7 @@ func executeGrepSingle(ctx context.Context, gen CommandGenerator, index *Index, 
 
 		cmd := &exec.Cmd{}
 		//cmd.Path = commandPath
-		cmd.Path = "/tmp/"
+		cmd.Path = "/usr/bin/rg"
 		cmd.Args = append(commandArgs, args...)
 		bytesRead, err := runSingleCommand(ctx, cmd, pathPrefix, index, maxBytes, search, fn)
 		if err != nil && err != io.EOF {
