@@ -90,7 +90,9 @@ func ReadFromIndex(ctx context.Context, client *storage.Client, bucket, indexNam
 		job.Status.State = state
 		job.Status.CompletionTime = metav1.Time{Time: time.Unix(completed, 0)}
 		if strings.Contains(job.Status.URL, "oadp") {
-			jobs = append(jobs, &job)
+			if strings.Contains(job.Status.URL, "e2e") {
+				jobs = append(jobs, &job)
+			}
 		}
 
 		return nil
