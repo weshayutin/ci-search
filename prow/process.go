@@ -457,18 +457,20 @@ func (a *LogAccumulator) downloadIfMissing(ctx context.Context, artifact *storag
 
 //func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *storage.ObjectAttrs, base string, length int64) error {
 func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *storage.ObjectAttrs, length int64) error {
-	for _, s := range []string{artifact.Name, artifact.Name + ".gz"} {
+	my_file := filepath.Base(artifact.Name)
+	my_path := a.path + "/artifacts/operator-e2e/gather-extra/artifacts/pods/"
+	for _, s := range []string{my_file, my_file + ".gz"} {
 		if _, ok := a.exists[s]; ok {
 			return nil
 		}
 	}
-	if err := os.MkdirAll(a.path, 0755); err != nil {
+	if err := os.MkdirAll(my_path, 0755); err != nil {
 		return err
 	}
 	if artifact.Size > 1*1024*1024 {
 		artifact.Name += ".gz"
 	}
-	f, err := os.Create(filepath.Join(a.path, artifact.Name))
+	f, err := os.Create(filepath.Join(my_path, my_file))
 	if err != nil {
 		return err
 	}
@@ -502,8 +504,6 @@ func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *st
 
 func (a *LogAccumulator) Artifacts(ctx context.Context, artifacts <-chan *storage.ObjectAttrs, unprocessedArtifacts chan<- *storage.ObjectAttrs) error {
 	var wg sync.WaitGroup
-	// log.Printf("WES ctx: " + ctx.String)
-	// log.Printf("WES artifacts: " + artifacts)
 	ec := make(chan error)
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
@@ -511,7 +511,9 @@ func (a *LogAccumulator) Artifacts(ctx context.Context, artifacts <-chan *storag
 		var rel string
 		if strings.HasPrefix(art.Name, a.build.Prefix) {
 			rel = art.Name[len(a.build.Prefix):]
+			klog.Info("WES: ART: " + art.Name)
 		}
+		klog.Info("WES: rel: " + rel)
 		switch {
 		case rel != "":
 			wg.Add(1)
