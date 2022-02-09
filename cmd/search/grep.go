@@ -139,8 +139,8 @@ func executeGrepSingle(ctx context.Context, gen CommandGenerator, index *Index, 
 	for 1 > 0 {
 		// the full args are added later, this is again appending
 		var args []string
-		var commandPaths = []string{"/usr/bin", "/bin/"}
-		klog.Infof("commandPaths: "+"%s ", commandPaths)
+		//var commandPaths = []string{"/usr/bin", "/bin/"}
+		//klog.Infof("commandPaths: "+"%s ", commandPaths)
 		/*args, commandPaths = splitStringSliceByLength(commandPaths, maxArgs)
 		if len(args) == 0 {
 			return fmt.Errorf("argument longer than maximum shell length")
@@ -270,6 +270,7 @@ func runSingleCommand(ctx context.Context, cmd *exec.Cmd, pathPrefix string, ind
 			}
 			if bytesRead > maxBytes {
 				return bytesRead, ErrMaxBytes
+				//return bytesRead, nil
 			}
 
 			line = 0
