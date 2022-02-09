@@ -117,7 +117,7 @@ func (o *options) handleIndex(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var searchTypeOptions []string
-	for _, searchType := range []string{"bug+junit", "bug", "junit", "build-log", "all"} {
+	for _, searchType := range []string{"all"} {
 		var selected string
 		if searchType == index.SearchType {
 			selected = "selected"
@@ -126,7 +126,7 @@ func (o *options) handleIndex(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var groupByOptions []string
-	for _, opt := range []string{"job", "none"} {
+	for _, opt := range []string{"none"} {
 		var selected string
 		switch {
 		case !index.GroupByJob && opt == "none", index.GroupByJob && opt != "none":
@@ -157,7 +157,8 @@ func (o *options) handleIndex(w http.ResponseWriter, req *http.Request) {
 	defer writer.Close()
 
 	var wrapValue string
-	nowrapClass := "nowrap"
+	//nowrapClass := "nowrap"
+	nowrapClass := ""
 	if index.WrapLines {
 		wrapValue = "checked"
 		nowrapClass = ""
