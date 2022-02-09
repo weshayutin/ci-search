@@ -173,7 +173,6 @@ func (s *DiskStore) write(ctx context.Context, job *Job, notifier PathNotifier) 
 		return nil, fmt.Errorf("job %s has no valid status URL: %v", job.Name, err)
 	}
 
-	klog.Infof("WES: u.Path: " + u.Path)
 	bucket, _, _, _, parts, err := jobPathToAttributes(u.Path, job.Status.URL)
 	if err != nil {
 		metricScrapedJobsFailed.Add(1)
@@ -193,11 +192,9 @@ func (s *DiskStore) write(ctx context.Context, job *Job, notifier PathNotifier) 
 		BucketPath: bucket,
 		Prefix:     path.Join(parts...) + "/",
 	}
-	klog.Infof("WES: BucketPath: " + build.BucketPath)
-	klog.Infof("WES: Prefix: " + build.Prefix)
+
 	start := time.Now()
 	accumulator, stale := NewAccumulator(s.base, &build, job.Status.CompletionTime.Time)
-	klog.V(7).Info("WES: s.base: " + s.base)
 	if !stale {
 		klog.V(7).Infof("Job %s is up to date", job.Status.URL)
 		return nil, nil
@@ -254,7 +251,6 @@ func jobPathToAttributes(path, full string) (bucket, trigger, job, buildID strin
 	if len(parts) < 5 {
 		return
 	}
-	//klog.Infof("WES! parts: " + parts[0])
 	if parts[0] != "view" || (parts[1] != "gcs" && parts[1] != "gs") {
 		return
 	}

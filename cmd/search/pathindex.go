@@ -61,8 +61,8 @@ func (index *pathIndex) parseJobPath(path string) (*Result, error) {
 	last := len(parts) - 1
 
 	result.URI = index.baseURI.ResolveReference(&url.URL{Path: strings.Join(parts[:last], "/")})
-	klog.Infof("WES result.URI: " + result.URI.String())
-
+	//Note: WES: I've removed these options from the UI, defaults to all in webui
+	// default file to search for is now *.log
 	switch parts[last] {
 	case "build-log.txt":
 		result.FileType = "build-log"
@@ -98,7 +98,6 @@ func (index *pathIndex) parseJobPath(path string) (*Result, error) {
 func (index *pathIndex) LastModified(path string) time.Time {
 	index.lock.Lock()
 	defer index.lock.Unlock()
-	klog.Info("WES: Index PATH: " + path)
 	if position, ok := index.pathIndex[path]; ok {
 		return index.ordered[position].age
 	}
@@ -123,7 +122,6 @@ func (index *pathIndex) Load() error {
 	stats := PathIndexStats{}
 
 	err = walk.Walk(index.base, func(path string, info os.FileInfo, err error) error {
-		klog.Info("WES: Index walk path: " + path)
 		if err != nil {
 			if os.IsNotExist(err) {
 				return nil
@@ -138,6 +136,7 @@ func (index *pathIndex) Load() error {
 			return nil
 		}
 
+		// WES: ovrridden in ui to all, file to search for is *.log
 		var indexName string
 		switch name := info.Name(); {
 		case strings.HasPrefix(name, "build-log.txt"):

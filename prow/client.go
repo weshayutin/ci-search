@@ -23,7 +23,6 @@ type Client struct {
 }
 
 func NewClient(base url.URL) *Client {
-	//klog.Fatal("WES " + string(base.String()))
 	// The deck-uri IS NOT what controls what is indexed.
 	return &Client{
 		Base:   base,

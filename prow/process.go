@@ -207,10 +207,6 @@ func NewAccumulator(base string, build *gcs.Build, modifiedBefore time.Time) (*L
 	number := path.Base(build.Prefix)
 	buildPath := filepath.Join(base, build.BucketPath, prefix)
 
-	klog.Infof("WES: prefix: " + prefix)
-	klog.Infof("WES: number: " + number)
-	klog.Infof("WES: buildPath: " + buildPath)
-
 	if !modifiedBefore.IsZero() {
 		if fi, err := os.Stat(buildPath); err == nil {
 			mod := fi.ModTime()
@@ -511,10 +507,9 @@ func (a *LogAccumulator) Artifacts(ctx context.Context, artifacts <-chan *storag
 		var rel string
 		if strings.HasPrefix(art.Name, a.build.Prefix) {
 			rel = art.Name[len(a.build.Prefix):]
-			klog.Info("WES: ART: " + art.Name)
 		}
-		klog.Info("WES: rel: " + rel)
 		switch {
+		// WES: TODO hack
 		case rel != "":
 			wg.Add(1)
 			go func(art *storage.ObjectAttrs) {

@@ -32,11 +32,9 @@ func (l *CachingLister) ListJobs(ctx context.Context) ([]*Job, error) {
 			return nil, err
 		}
 
-		klog.Infof("WES: jobs: "+"%v", jobs)
 		l.jobs = jobs
 		return jobs, nil
 	}
-	klog.Infof("WES: l.jobs: "+"%v", l.jobs)
 	return l.jobs, nil
 }
 
@@ -59,11 +57,7 @@ func ReadFromIndex(ctx context.Context, client *storage.Client, bucket, indexNam
 	//jobs := make([]*Job, 0, 2048)
 
 	i := 0
-	klog.Infof("WES indexName: " + indexName)
 	// hrm.. WES indexName: job-state
-	klog.Infof("WES statusURL: " + statusURL.String())
-	klog.Infof("WES job: "+"%v", jobs)
-	// this is the HOLE
 	if err := index.EachJob(ctx, client, 0, statusURL, func(job Job, attr *storage.ObjectAttrs) error {
 		state, ok := attr.Metadata["state"]
 		if !ok {
@@ -103,8 +97,6 @@ func ReadFromIndex(ctx context.Context, client *storage.Client, bucket, indexNam
 		klog.Errorf("scan failed, will retry: %v", err)
 	}
 	klog.V(5).Infof("Found %d jobs in %s", len(jobs), time.Now().Sub(start))
-	//klog.Infof("WES jobs: "+"%v", jobs)
-	//klog.Fatalf("stop")
 	return jobs, nil
 }
 
@@ -181,7 +173,6 @@ func (i *Index) EachJob(ctx context.Context, client *storage.Client, limit int64
 			//klog.V(7).Infof("NOT OADP, dropping: %s", link)
 			return nil
 		} else {
-			klog.V(7).Infof("WES: DECKURL: " + deckURL)
 			klog.V(7).Infof("FOUND OADP, keeping: %s", link)
 		}
 

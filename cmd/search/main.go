@@ -249,6 +249,7 @@ func (o *options) RipgrepSourceArguments(index *Index, jobNames sets.String) ([]
 				args = append(args, o.jobsPath)
 			}
 		}
+		// WES: overide the default build-log.txt junit etc.. w/ *.log
 		args = []string{"--glob", "*.log", "/var/tmp/oadp_ci_search/jobs"}
 		return args, append(paths, additionalPaths...), nil
 	}
