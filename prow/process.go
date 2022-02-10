@@ -455,6 +455,7 @@ func (a *LogAccumulator) downloadIfMissing(ctx context.Context, artifact *storag
 func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *storage.ObjectAttrs, length int64) error {
 	my_file := filepath.Base(artifact.Name)
 	my_path := a.path + "/artifacts/operator-e2e/gather-extra/artifacts/pods/"
+	// WES: TODO for periodic we'll have pull down artifacts/operator-e2e-aws-periodic-slack/gather-extra/artifacts/pods/ as well
 	for _, s := range []string{my_file, my_file + ".gz"} {
 		if _, ok := a.exists[s]; ok {
 			return nil
