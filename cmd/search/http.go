@@ -643,7 +643,7 @@ const htmlPageEnd = `
 const htmlIndexForm = `
 <form class="form mt-4 mb-4" method="GET">
 	<div class="input-group input-group-lg mb-2">
-		<input title="A regular expression over the contents of test logs and junit output - uses ripgrep regular expressions" autocomplete="off" autofocus name="search" class="form-control col-auto" value="%s" placeholder="Search OpenShift CI failures by entering a regex search ...">
+		<input title="A regular expression over the contents of test logs and junit output - uses ripgrep regular expressions" autocomplete="off" autofocus name="search" class="form-control col-auto" value="%s" placeholder="Search OADP PR CI failures by entering a regex search ...">
 		<select title="How far back to search for jobs" name="maxAge" class="form-control custom-select col-1" onchange="this.form.submit();">%s</select>
 		<select title="Number of lines before and after the match to show" name="context" class="form-control custom-select col-1" onchange="this.form.submit();">%s</select>
 		<select title="Type of results to return" name="type" class="form-control custom-select col-1" onchange="this.form.submit();">%s</select>
@@ -666,6 +666,12 @@ const htmlIndexForm = `
 
 const htmlEmptyPage = `
 <div class="ml-3" style="margin-top: 3rem; color: #666;">
+<hr>
+<p> WIP for OADP: 
+<p> Status: Pull request jobs:  index and search working!
+<p> Status: Periodic jobs:  Not getting pulled into filesystem
+<p> Status: Code Quality of the changes: Total hack, not for production yet
+<hr>
 <p>Find bugs and test failures from failed or flaky CI jobs in <a target="_blank" href="%s">OpenShift CI</a>.</p>
 <p>The search input will use <a target="_blank" href="https://docs.rs/regex/0.2.5/regex/#syntax">ripgrep regular-expression patterns</a>.</p>
 <p>Searches are case-insensitive (using ripgrep "smart casing")</p>
