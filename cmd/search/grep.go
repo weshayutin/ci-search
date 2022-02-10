@@ -131,7 +131,8 @@ func executeGrepSingle(ctx context.Context, gen CommandGenerator, index *Index, 
 	maxBytes := index.MaxBytes
 	pathPrefix := gen.PathPrefix()
 
-	for 1 > 0 {
+	myCommandPaths := 1
+	for myCommandPaths > 0 {
 		// the full args are added later, this is again appending
 		var args []string
 		// WES: was getting stuck here, TODO revist
@@ -155,6 +156,7 @@ func executeGrepSingle(ctx context.Context, gen CommandGenerator, index *Index, 
 		}
 
 		maxBytes -= bytesRead
+		myCommandPaths--
 	}
 	return nil
 }
