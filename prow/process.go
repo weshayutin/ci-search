@@ -382,6 +382,7 @@ func (a *LogAccumulator) Finished(ctx context.Context) {
 		if ok {
 			continue
 		}
+		// WES: hrm.. looking for only 3 files, and why the timestamp may not be on jobs
 		if err := os.Chtimes(filepath.Join(a.path, file), at, at); err != nil && !os.IsNotExist(err) {
 			klog.Errorf("Unable to set modification time of %s to %d: %v", file, a.finished, err)
 		}
@@ -454,12 +455,19 @@ func (a *LogAccumulator) downloadIfMissing(ctx context.Context, artifact *storag
 //func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *storage.ObjectAttrs, base string, length int64) error {
 func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *storage.ObjectAttrs, length int64) error {
 	my_file := filepath.Base(artifact.Name)
-	my_path := a.path + "/artifacts/operator-e2e/gather-extra/artifacts/pods/"
+	// extract the what the local file path should be from my_file
+	my_file_array := strings.Split(artifact.Name, "/")
+	//my_path := a.path + "/artifacts/operator-e2e/gather-extra/artifacts/pods/"
+	my_path := a.path + "/" + my_file_array[6] + "/" + my_file_array[7] + "/" + my_file_array[8] + "/" + my_file_array[9] + "/" + my_file_array[10] + "/"
 	// WES: TODO for periodic we'll have pull down artifacts/operator-e2e-aws-periodic-slack/gather-extra/artifacts/pods/ as well
+	// WES: in fact.. get the path from the artifact.
 	for _, s := range []string{my_file, my_file + ".gz"} {
 		if _, ok := a.exists[s]; ok {
 			return nil
 		}
+	}
+	if strings.Contains(a.path, "periodic") {
+		klog.Info("WES HERE!")
 	}
 	if err := os.MkdirAll(my_path, 0755); err != nil {
 		return err

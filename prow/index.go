@@ -248,6 +248,7 @@ func (s *DiskStore) Sync() error {
 
 func jobPathToAttributes(path, full string) (bucket, trigger, job, buildID string, parts []string, err error) {
 	parts = strings.Split(strings.Trim(path, "/"), "/")
+
 	if len(parts) < 5 {
 		return
 	}
@@ -264,6 +265,8 @@ func jobPathToAttributes(path, full string) (bucket, trigger, job, buildID strin
 		switch {
 		case len(parts) == 3:
 		case len(parts) == 4:
+		case len(parts) == 5:
+			parts = parts[:3]
 		default:
 			err = fmt.Errorf("unrecognized logs path %q in %s", strings.Join(parts, "/"), full)
 			return
@@ -281,6 +284,8 @@ func jobPathToAttributes(path, full string) (bucket, trigger, job, buildID strin
 		parts = parts[3:]
 
 		switch {
+		case len(parts) == 9 && parts[1] == "pull": //added by WES
+			parts = parts[:6]
 		case len(parts) == 6 && parts[1] == "pull":
 		case len(parts) == 5 && parts[1] == "pull" && parts[2] == "batch":
 		case len(parts) == 5 && parts[1] == "pull":

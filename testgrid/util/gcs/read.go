@@ -226,7 +226,24 @@ func (build Build) Finished() (*Finished, error) {
 
 // Artifacts writes the object name of all paths under the build's artifact dir to the output channel.
 func (build Build) Artifacts(artifacts chan<- *storage.ObjectAttrs) error {
-	pref := build.Prefix + "artifacts/operator-e2e/gather-extra/artifacts/pods/"
+	oadpPrefix := [...]string{
+		build.Prefix + "artifacts/operator-e2e/gather-extra/artifacts/pods/",
+		build.Prefix + "artifacts/operator-e2e-aws-periodic-slack/gather-extra/artifacts/pods/",
+		build.Prefix + "artifacts/operator-e2e-gcp-periodic-slack/gather-extra/artifacts/pods/",
+		build.Prefix + "artifacts/operator-e2e-azure-periodic-slack/gather-extra/artifacts/pods/"}
+
+	// example logs/periodic-ci-openshift-oadp-operator-master-4.7-operator-e2e-gcp-periodic-slack/1492347781090643968/
+	pref := ""
+	if strings.Contains(build.Prefix, "pull") {
+		pref = oadpPrefix[0]
+	} else if strings.Contains(build.Prefix, "aws") {
+		pref = oadpPrefix[1]
+	} else if strings.Contains(build.Prefix, "gcp") {
+		pref = oadpPrefix[2]
+	} else if strings.Contains(build.Prefix, "azure") {
+		pref = oadpPrefix[3]
+	}
+
 	query := &storage.Query{Prefix: pref}
 	query.SetAttrSelection([]string{"Name", "Size"})
 	objs := build.Bucket.Objects(build.Context, query)
