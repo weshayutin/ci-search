@@ -712,9 +712,10 @@ const htmlIndexForm = `
 const htmlEmptyPage = `
 <div class="ml-3" style="margin-top: 3rem; color: #666;">
 <hr>
-<p> WIP for OADP: 
+<p> WIP for OADP:
 <p> Status: Pull request jobs:  index and search working!
-<p> Status: Periodic jobs:  Not getting pulled into filesystem
+<p> Status: Periodic jobs:  index and search working!
+<p> Status: UI:  need to get the age of the jobs working
 <p> Status: Code Quality of the changes: Total hack, not for production yet
 <hr>
 <p>Find bugs and test failures from failed or flaky CI jobs in <a target="_blank" href="%s">OpenShift CI</a>.</p>
