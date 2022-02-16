@@ -454,21 +454,43 @@ func (a *LogAccumulator) downloadIfMissing(ctx context.Context, artifact *storag
 
 //func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *storage.ObjectAttrs, base string, length int64) error {
 func (a *LogAccumulator) downloadIfMissingTail(ctx context.Context, artifact *storage.ObjectAttrs, length int64) error {
+	// artifact.Name pr-logs/pull/openshift_oadp-operator/565/pull-ci-openshift-oadp-operator-master-4.7-operator-e2e/1493569330674143232/artifacts/operator-e2e
+	// /gather-extra/artifacts/pods/openshift-adp_a2fa0f9afd71974e60e310f27e25fe14f4e02f3029cccc8d4209b375364pnnn_extract_previous.log
 	my_file := filepath.Base(artifact.Name)
 	// extract the what the local file path should be from my_file
-	my_file_array := strings.Split(artifact.Name, "/")
-	//my_path := a.path + "/artifacts/operator-e2e/gather-extra/artifacts/pods/"
-	my_path := a.path + "/" + my_file_array[6] + "/" + my_file_array[7] + "/" + my_file_array[8] + "/" + my_file_array[9] + "/" + my_file_array[10] + "/"
-	// WES: TODO for periodic we'll have pull down artifacts/operator-e2e-aws-periodic-slack/gather-extra/artifacts/pods/ as well
-	// WES: in fact.. get the path from the artifact.
+	//my_file_array := strings.Split(artifact.Name, "/")
+	//my_file_array_path := my_file_array[:len(my_file_array)-1]
+	//my_file_array_path_joined := strings.Join(my_file_array_path, "/")
+	// a.path = /var/tmp/oadp_ci_search/jobs/origin-ci-test/pr-logs/pull/openshift_oadp-operator/565/pull-ci-openshift-oadp-operator-master-4.7-operator-e2e/1493569330674143232
+	// artifact.Name = artifacts/foo/bar/file.log
+	// my_file_array_path = artifacts/foo/bar/
+
+	oadpPrefix := [...]string{
+		//a.path + a.path + "/" + my_file_array[6] + "/" + my_file_array[7] + "/" + my_file_array[8] + "/" + my_file_array[9] + "/" + my_file_array[10] + "/",
+		//a.path + "/" + my_file_array_path_joined,
+		a.path,
+		a.path + "/artifacts/operator-e2e-aws-periodic-slack/gather-extra/artifacts/pods/",
+		a.path + "/artifacts/operator-e2e-gcp-periodic-slack/gather-extra/artifacts/pods/",
+		a.path + "/artifacts/operator-e2e-azure-periodic-slack/gather-extra/artifacts/pods/"}
+
+	// example logs/periodic-ci-openshift-oadp-operator-master-4.7-operator-e2e-gcp-periodic-slack/1492347781090643968/
+	my_path := ""
+	if strings.Contains(a.path, "pull") {
+		my_path = oadpPrefix[0]
+	} else if strings.Contains(a.path, "aws") {
+		my_path = oadpPrefix[1]
+	} else if strings.Contains(a.path, "gcp") {
+		my_path = oadpPrefix[2]
+	} else if strings.Contains(a.path, "azure") {
+		my_path = oadpPrefix[3]
+	}
+
 	for _, s := range []string{my_file, my_file + ".gz"} {
 		if _, ok := a.exists[s]; ok {
 			return nil
 		}
 	}
-	if strings.Contains(a.path, "periodic") {
-		klog.Info("WES HERE!")
-	}
+
 	if err := os.MkdirAll(my_path, 0755); err != nil {
 		return err
 	}
