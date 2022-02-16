@@ -472,12 +472,57 @@ func renderMatches(ctx context.Context, w io.Writer, index *Index, generator Com
 			drop = false
 			matchCount = 0
 
-			// decide whether to print the next result
+			// TODO REFACTOR THIS WHOLE BIT
+			// save original variable: name
+			myOriginalName := name
+			// the metadata url is meant to end w/ the job id
+			// this is only broken w/ periodic jobs
 			metadata, err := resolver.MetadataFor(name)
+			if strings.Contains(name, "periodic") {
+				myname := strings.Split(name, "/artifacts")
+				name = myname[0]
+				metadata, err = resolver.MetadataFor(name)
+				// TODO not sure why the metadata.FileType is set to job id
+				metadata.URI.Path = metadata.URI.Path + "/" + metadata.FileType
+				ss := strings.Split(myOriginalName, "/")
+				metadata.FileType = ss[len(ss)-1]
+			} else {
+				metadata, err = resolver.MetadataFor(name)
+			}
+
+			//klog.Info("WES: metadata FileType: " + metadata.FileType)
+			//klog.Info("WES: metadata Name: " + metadata.Name)
+			//klog.Info("WES: metadata URI: " + metadata.URI.String())
+
+			// the metadata url is meant to end w/ the job id
+			// this is only broken w/ periodic jobs
+
+			if strings.Contains(metadata.URI.String(), "pull-ci-openshift-oadp-master-4.7-operator-e2e") {
+				metadata.Name = "pull-ci-openshift-oadp-operator-master-4.7-operator-e2e"
+			} else if strings.Contains(metadata.URI.String(), "pull-ci-openshift-oadp-master-4.8-operator-e2e") {
+				metadata.Name = "pull-ci-openshift-oadp-operator-master-4.8-operator-e2e"
+			} else if strings.Contains(metadata.URI.String(), "4.7-operator-e2e-aws-periodic") {
+				metadata.Name = "periodic-ci-openshift-oadp-operator-master-4.7-operator-e2e-aws-periodic-slack"
+			} else if strings.Contains(metadata.URI.String(), "4.7-operator-e2e-gcp-periodic") {
+				metadata.Name = "periodic-ci-openshift-oadp-operator-master-4.7-operator-e2e-gcp-periodic-slack"
+			} else if strings.Contains(metadata.URI.String(), "4.7-operator-e2e-azure-periodic") {
+				metadata.Name = "periodic-ci-openshift-oadp-operator-master-4.7-operator-e2e-azure-periodic-slack"
+			} else if strings.Contains(metadata.URI.String(), "4.8-operator-e2e-aws-periodic") {
+				metadata.Name = "periodic-ci-openshift-oadp-operator-master-4.7-operator-e2e-aws-periodic-slack"
+			} else if strings.Contains(metadata.URI.String(), "4.8-operator-e2e-gcp-periodic") {
+				metadata.Name = "periodic-ci-openshift-oadp-operator-master-4.7-operator-e2e-gcp-periodic-slack"
+			} else if strings.Contains(metadata.URI.String(), "4.8-operator-e2e-azure-periodic") {
+				metadata.Name = "periodic-ci-openshift-oadp-operator-master-4.7-operator-e2e-azure-periodic-slack"
+
+			}
+
+			/*klog.Info("WES: metadata FileType: " + metadata.FileType)
+			klog.Info("WES: metadata Name: " + metadata.Name)
+			klog.Info("WES: metadata URI: " + metadata.URI.String())*/
 			if err != nil {
 				klog.Errorf("unable to resolve metadata for: %s: %v", name, err)
-				drop = true
-				return nil
+				// drop = true  // WES commented this out
+				// return nil
 			}
 			if metadata.URI == nil {
 				klog.Errorf("no job URI for %q", name)
