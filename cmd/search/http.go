@@ -11,6 +11,7 @@ import (
 	"math"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"regexp"
 	"sort"
@@ -534,7 +535,9 @@ func renderMatches(ctx context.Context, w io.Writer, index *Index, generator Com
 				return nil
 			}
 
-			age, recent := formatAge(metadata.LastModified, start, index.MaxAge)
+			// TODO remove the hardcoded path prefix
+			myage, _ := os.Stat("/var/tmp/oadp_ci_search/" + name)
+			age, recent := formatAge(myage.ModTime(), start, index.MaxAge)
 			if !metadata.IgnoreAge && !recent {
 				klog.V(7).Infof("Filtered %s, older than query limit", name)
 				drop = true
