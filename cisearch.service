@@ -1,0 +1,15 @@
+[Unit]
+Description=Execute openshifts ci-search as a systemd service
+After=network.target
+StartLimitIntervalSec=1
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=2
+#User=fedora # copied search binary to /usr/bin/
+#RootDirectory=/home/fedora/ci-search/   # not needed
+ExecStart=/usr/bin/search --path /var/tmp/oadp_ci_search --deck-uri=https://prow.ci.openshift.org/  --interval 1h --v 7
+
+[Install]
+WantedBy=multi-user.target
